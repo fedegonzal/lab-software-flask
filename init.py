@@ -75,4 +75,5 @@ universities_schema = UniversitySchema(many=True)
 
 # Create the database
 with app.app_context():
+    db.create_all()
     seed_db()
