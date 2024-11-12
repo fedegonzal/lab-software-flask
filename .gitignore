@@ -1,0 +1,8 @@
+# Let's ignore common files and directories with Python projects
+venv/
+__pycache__/
+*.pyc
+*.pyo
+instance/
+.DS_Store
+universities.db
