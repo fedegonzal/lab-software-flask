@@ -28,12 +28,12 @@ source venv/bin/activate
 pip install -r requirements.txt
 
 # Run the DB seed
-python seed.py
+python init.py
 ```
 
 ### About Virtual Environments
 
-A Virtual Environment is a tool to keep dependencies required by different projects in separate places, by creating virtual Python environments. It solves the “Project X depends on version 1.x but, Project Y needs 4.x” dilemma, and keeps your global site-packages directory clean and manageable.
+A Virtual Environment is a tool to keep dependencies required by different projects in separate places, by creating virtual Python environments. It solves the "Project X depends on version 1.x but, Project Y needs 4.x" dilemma, and keeps your global site-packages directory clean and manageable.
 
 Most common commands with virtual environments are:
 
@@ -55,13 +55,29 @@ SQLite is built into all mobile phones, browsers, most computers, and comes bund
 
 ### Running the API
 
+#### Without web sockets
 To run the API, you can use the following command:
 
 ```bash
-python app.py
+python api.py
 ```
 
 The API will be available at `http://127.0.0.1:5000`
+
+#### With web sockets
+To run the API, you can use the following command:
+
+```bash
+python api-ws.py
+```
+
+The API will be available at `http://127.0.0.1:5000`
+
+### Running the frontend
+NodeJs is required to run the frontend. If you don't have it installed, you can download it from the [official website](https://nodejs.org/). LTS version is recommended.
+```bash
+npx http-server -c-1 .
+```
 
 ### Endpoints
 
