@@ -30,6 +30,16 @@
 
         <div class="row">
             <div class="col-12">
+                <h1>Update University country with Header Key Auth</h1>
+                <form onsubmit="updateUniversity(event);" method="post">
+                    <input type="text" id="hk-country" placeholder="New country" required>
+                    <button type="submit" class="btn btn-primary">Update University</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
                 <h1>Universities</h1>
                 <table class="table table-striped">
                     <thead>
@@ -121,6 +131,48 @@
                     }
                     else {
                         throw new Error('Error updating University HTTP STATUS=' + response.status);
+                    }
+                })
+                .catch(error => {
+                    alert(error);
+                });
+        }
+
+        function updateUniversity(event) {
+            // prevent form to submit
+            event.preventDefault();
+
+            // obtain country from input
+            const newCountry = document.getElementById('hk-country').value;
+
+            // template for new university
+            const universityTemplate = {
+                addres: "739 University Blvd",
+                city: "Tuscaloosa",
+                country: newCountry,
+                id: 1,
+                lat: 33.2113,
+                lng: -87.5458,
+                name: "University of Alabama",
+                picture: "http://www.ua.edu/_common/images/logo.png",
+                state: "AL",
+                website: "http://www.ua.edu/"
+            }
+
+            fetch('http://127.0.0.1:5000/universities/1', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-API-KEY': 'MySecretKey',
+                },
+                body: JSON.stringify(universityTemplate)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        updateUniversitiesTable();
+                    }
+                    else {
+                        throw new Error('Error creating University HTTP STATUS=' + response.status);
                     }
                 })
                 .catch(error => {

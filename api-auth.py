@@ -28,6 +28,12 @@ def verify_password(username, password):
         return username
     return None
 
+# Hardcoded API keys for demonstration
+API_KEYS = {"MySecretKey"}
+
+def validate_api_key(key):
+    return key in API_KEYS
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 # Database configuration
@@ -109,6 +115,10 @@ def add_university():
 # Update an existing university by ID
 @app.route('/universities/<int:id>', methods=['PUT'])
 def update_university(id):
+    api_key = request.headers.get('X-API-KEY')
+    if not api_key or not validate_api_key(api_key):
+        return jsonify({"message": "Invalid or missing API key"}), 401
+
     university = University.query.get(id)
     if university is None:
         return jsonify({"message": "University not found"}), 404
