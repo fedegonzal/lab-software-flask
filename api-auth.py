@@ -14,10 +14,13 @@ CORS(app) # Enable CORS to allow requests from any origin
 # Initialize Basic Auth
 auth = HTTPBasicAuth()
 
+auth_user = "user"
+auth_pass = "1234"
+
 # Hardcoded username-password for demonstration
 users = {
-    "admin": generate_password_hash("user"),
-    "user": generate_password_hash("1234")
+    "admin": generate_password_hash(auth_user),
+    "user": generate_password_hash(auth_pass)
 }
 
 @auth.verify_password
@@ -33,6 +36,13 @@ API_KEYS = {"MySecretKey"}
 
 def validate_api_key(key):
     return key in API_KEYS
+
+# Hardcoded tokens for demonstration
+SECRET_BEARER_TOKEN = "MySecretToken"
+BEARER_TOKENS = {SECRET_BEARER_TOKEN}
+
+def validate_bearer_token(token):
+    return token in BEARER_TOKENS
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -140,6 +150,15 @@ def update_university(id):
 # Delete a university by ID
 @app.route('/universities/<int:id>', methods=['DELETE'])
 def delete_university(id):
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return jsonify({"message": "Missing or invalid Authorization header"}), 401
+ 
+    # Bearer MySecretToken
+    token = auth_header.split(" ")[1]  # Extract token
+    if not validate_bearer_token(token):
+        return jsonify({"message": "Invalid Bearer token"}), 403
+
     university = University.query.get(id)
     if university is None:
         return jsonify({"message": "University not found"}), 404
@@ -148,6 +167,20 @@ def delete_university(id):
     db.session.commit()
     return jsonify({"message": "University deleted successfully"})
 
+# Login route
+@app.route('/login', methods=['POST'])
+def login(): 
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+
+    if not username or not password:
+        return jsonify({"message": "Missing username or password"}), 400
+    
+    if username != auth_user or password != auth_pass:
+        return jsonify({"message": "Invalid username or password"}), 401
+    
+    return jsonify({"message": "Login successful", "access_token": SECRET_BEARER_TOKEN})
 
 # Run the server
 if __name__ == '__main__':

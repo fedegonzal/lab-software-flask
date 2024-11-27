@@ -40,10 +40,24 @@
 
         <div class="row">
             <div class="col-12">
+                <h1>Delete University country with Bearer token</h1>
+                <form onsubmit="deleteUniversity(event);" method="post">
+                    <input type="text" id="bt-username" placeholder="Username" required>
+                    <input type="password" id="bt-password" placeholder="Password" required>
+                    <input type="number" id="bt-country" placeholder="ID" required>
+                    <p id="bearer_token"></p>
+                    <button type="submit" class="btn btn-danger">Delete University</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
                 <h1>Universities</h1>
                 <table class="table table-striped">
                     <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Name</th>
                             <th>City</th>
                             <th>Country</th>
@@ -82,6 +96,7 @@
                     for (university of data) {
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
+                            <td>${university.id}</td>
                             <td>${university.name}</td>
                             <td>${university.city}</td>
                             <td>${university.country}</td>
@@ -146,7 +161,7 @@
             const newCountry = document.getElementById('hk-country').value;
 
             // template for new university
-            const universityTemplate = {
+            const uniUpdateTpl = {
                 addres: "739 University Blvd",
                 city: "Tuscaloosa",
                 country: newCountry,
@@ -165,7 +180,7 @@
                     'Content-Type': 'application/json',
                     'X-API-KEY': 'MySecretKey',
                 },
-                body: JSON.stringify(universityTemplate)
+                body: JSON.stringify(uniUpdateTpl)
             })
                 .then(response => {
                     if (response.ok) {
@@ -178,6 +193,53 @@
                 .catch(error => {
                     alert(error);
                 });
+        }
+
+        function deleteUniversity(event) {
+            // prevent form to submit
+            event.preventDefault();
+
+            const universityId = document.getElementById('bt-country').value;
+            const username = document.getElementById('bt-username').value;
+            const password = document.getElementById('bt-password').value;
+
+            fetch(`http://127.0.0.1:5000/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            }).then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                else {
+                    throw new Error('Error login HTTP STATUS=' + response.status);
+                }
+            }).then(data => {
+                const token = data.access_token;
+                document.getElementById('bearer_token').innerText = 'Bearer: ' + token;
+                return fetch(`http://127.0.0.1:5000/universities/${universityId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    }
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            updateUniversitiesTable();
+                        }
+                        else {
+                            throw new Error('Error creating University HTTP STATUS=' + response.status);
+                        }
+                    })
+            }).catch(error => {
+                alert(error);
+            });
         }
 
         updateUniversitiesTable();

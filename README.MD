@@ -73,6 +73,15 @@ python api-ws.py
 
 The API will be available at `http://127.0.0.1:5000`
 
+#### With Auth features
+To run the API, you can use the following command:
+
+```bash
+python api-auth.py
+```
+
+The API will be available at `http://127.0.0.1:5000`
+
 ### Running the frontend
 NodeJs is required to run the frontend. If you don't have it installed, you can download it from the [official website](https://nodejs.org/). LTS version is recommended.
 ```bash
